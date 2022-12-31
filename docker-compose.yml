@@ -1,0 +1,41 @@
+services:
+
+  db:
+    # image: mariadb
+    build: .
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MARIADB_ROOT_PASSWORD: 123
+      MARIADB_DATABASE: wp_database
+    volumes:
+      - mariadb_data:/var/lib/mysql
+  
+  wp:
+    image: wordpress
+    restart: always
+    ports:
+      - 80:80
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: root
+      WORDPRESS_DB_PASSWORD: 123
+      WORDPRESS_DB_NAME: wp_database
+    volumes:
+      - ./wordpress:/var/www/html
+
+  admin:
+    image: phpmyadmin
+    ports:
+      - 8080:80
+    restart: always
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: 123
+    depends_on:
+      - db
+
+volumes:
+  mariadb_data:
